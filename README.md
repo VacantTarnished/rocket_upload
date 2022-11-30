@@ -4,7 +4,7 @@ This is a basic API File Upload using **Rust** and the Cargo **Rocket**.
   
 If you want to use this, I highly recommend checking out the configuration documentation from Rocket found [here](https://rocket.rs/v0.5-rc/guide/configuration/)  
   
-Also if you want to use Docker Compose for this there is a example compose file [here](docker-compose.yml)
+Also if you want to use Docker Compose for this there is a example compose file [here](example_compose/docker-compose.yml)
 
 ## How to build the Binary
 1. Clone the Repository (duh)
