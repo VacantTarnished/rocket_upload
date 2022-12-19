@@ -8,10 +8,16 @@ struct Upload<'f> {
 
 #[post("/", format = "multipart/form-data", data = "<form>")]
 async fn upload_file(mut form: Form<Upload<'_>>) -> Result<(), Status> {
-    let new_regex = Regex::new(r"^[[aA0-zZ9]_]{1}([[aA0-zZ9]_\-\.]+[aA0-zZ9]{1})?$");
+    let new_regex_unsafe = std::env::var("UPLOAD_FILE_REGEX");
+    
+    if new_regex_unsafe.is_err() {
+        return Err(Status::InternalServerError);
+    }
+
+    let new_regex = Regex::new(new_regex_unsafe.unwrap().as_str());
 
     if new_regex.is_err() {
-       return Err(Status::InternalServerError);
+        return Err(Status::InternalServerError);
     }
 
     let re = new_regex.unwrap();
@@ -22,7 +28,6 @@ async fn upload_file(mut form: Form<Upload<'_>>) -> Result<(), Status> {
 
 
     let file_name = form.file.raw_name().unwrap().dangerous_unsafe_unsanitized_raw().to_string();
-
     if re.is_match(file_name.as_str()) {
         if form.file.copy_to(file_name).await.is_ok() {
             let status_result = std::process::Command::new("/post-upload").status();
